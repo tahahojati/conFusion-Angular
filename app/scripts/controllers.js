@@ -132,7 +132,6 @@ angular.module('confusionApp')
             date: ""
         };
     }
-}
 }])
 
 // implement the IndexController and About Controller here
