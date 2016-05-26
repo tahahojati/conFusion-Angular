@@ -11,74 +11,81 @@ var gulp = require('gulp'),
     cache = require('gulp-cache'),
     changed = require('gulp-changed'),
     rev = require('gulp-rev'),
-    browserSync = require('browser-sync'),
+    // browserSync = require('browser-sync'),
     del = require('del'),
     ngannotate = require('gulp-ng-annotate');
 
-    gulp.task('jshint', function() {
-      return gulp.src('app/scripts/**/*.js')
-      .pipe(jshint())
-      .pipe(jshint.reporter(stylish));
-    });
+gulp.task('jshint', function() {
+    return gulp.src('app/scripts/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter(stylish));
+});
 
-    // Clean
-    gulp.task('clean', function() {
-        return del(['public']);
-    });
+// Clean
+gulp.task('clean', function() {
+    return del(['public']);
+});
 
-    // Default task
-    gulp.task('default', ['clean'], function() {
-        gulp.start('usemin', 'imagemin','copyfonts');
-    });
+// Default task
+gulp.task('default', ['clean'], function() {
+    gulp.start('usemin', 'imagemin', 'copyfonts');
+});
 
-    gulp.task('usemin',['jshint'], function () {
-      return gulp.src('./app/**/*.html')
-          .pipe(usemin({
-            css:[minifycss(),rev()],
-            js: [ngannotate(),uglify(),rev()]
-            // js: [ngannotate(),rev()]
-          }))
-          .pipe(gulp.dest('public/'));
-    });
-    // Images
-    gulp.task('imagemin', function() {
-      return del(['public/images']), gulp.src('app/images/**/*')
-        .pipe(cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
+gulp.task('usemin', ['jshint'], function() {
+    return gulp.src('./app/**/*.html')
+        .pipe(usemin({
+            css: [minifycss(), rev()],
+            js: [ngannotate(), uglify(), rev()]
+                // js: [ngannotate(),rev()]
+        }))
+        .pipe(gulp.dest('public/'));
+});
+// Images
+gulp.task('imagemin', function() {
+    return del(['public/images']), gulp.src('app/images/**/*')
+        .pipe(cache(imagemin({
+            optimizationLevel: 3,
+            progressive: true,
+            interlaced: true
+        })))
         .pipe(gulp.dest('public/images'))
-        .pipe(notify({ message: 'Images task complete' }));
-    });
+        .pipe(notify({
+            message: 'Images task complete'
+        }));
+});
 
-    gulp.task('copyfonts', ['clean'], function() {
-       gulp.src('./bower_components/font-awesome/fonts/**/*.{ttf,woff,eof,svg}*')
-       .pipe(gulp.dest('./public/fonts'));
-       gulp.src('./bower_components/bootstrap/dist/fonts/**/*.{ttf,woff,eof,svg}*')
-       .pipe(gulp.dest('./public/fonts'));
-    });
+gulp.task('copyfonts', ['clean'], function() {
+    gulp.src('./bower_components/font-awesome/fonts/**/*.{ttf,woff,eof,svg}*')
+        .pipe(gulp.dest('./public/fonts'));
+    gulp.src('./bower_components/bootstrap/dist/fonts/**/*.{ttf,woff,eof,svg}*')
+        .pipe(gulp.dest('./public/fonts'));
+});
 
-    // Watch
-    gulp.task('watch', ['browser-sync'], function() {
-      // Watch .js files
-      gulp.watch('{app/scripts/**/*.js,app/styles/**/*.css,app/**/*.html}', ['usemin']);
-          // Watch image files
-      gulp.watch('app/images/**/*', ['imagemin']);
+// Watch
+gulp.task('watch', ['browser-sync'], function() {
+    // Watch .js files
+    gulp.watch('{app/scripts/**/*.js,app/styles/**/*.css,app/**/*.html}', ['usemin']);
+    // Watch image files
+    gulp.watch('app/images/**/*', ['imagemin']);
 
-    });
+});
 
-    gulp.task('browser-sync', ['default'], function () {
-       var files = [
-          'app/**/*.html',
-          'app/styles/**/*.css',
-          'app/images/**/*.png',
-          'app/scripts/**/*.js',
-          'public/**/*'
-       ];
+gulp.task('browser-sync', ['default'], function() {
+    var files = [
+        'app/**/*.html',
+        'app/styles/**/*.css',
+        'app/images/**/*.png',
+        'app/scripts/**/*.js',
+        'public/**/*'
+    ];
 
-       browserSync.init(files, {
-          server: {
-             baseDir: "public",
-             index: "index.html"
-          }
-       });
-            // Watch any files in public/, reload on change
-      gulp.watch(['public/**']).on('change', browserSync.reload);
-        });
+    //  browserSync.init(files, {
+    //     server: {
+    //        baseDir: "public",
+    //        index: "index.html"
+    //     }
+    // }
+    //  );
+    // Watch any files in public/, reload on change
+    // gulp.watch(['public/**']).on('change', browserSync.reload);
+});
